@@ -1,0 +1,29 @@
+Sub DeleteRowsWhereLastColumnIsOne()
+    Dim ws As Worksheet
+    Dim LastRow As Long, LastCol As Integer, i As Long
+    Dim CellFormula As String
+    Dim EvaluatedValue As Variant
+
+    ' Set the worksheet
+    Set ws = ThisWorkbook.Sheets("Sheet1") ' Change "Sheet1" to your sheet's name
+
+    With ws
+        ' Find the last row and last column with data
+        LastRow = .Cells(.Rows.Count, "A").End(xlUp).Row
+        LastCol = .Cells(1, .Columns.Count).End(xlToLeft).Column
+
+        ' Loop from last row to the second row (assuming the first row has headers)
+        For i = LastRow To 2 Step -1
+            CellFormula = .Cells(i, LastCol).Formula
+
+            ' Check if the cell contains a formula
+            If Left(CellFormula, 1) = "=" Then
+                EvaluatedValue = .Evaluate(CellFormula)
+                ' Check if the evaluated value of the formula is 1
+                If EvaluatedValue = 1 Then
+                    .Rows(i).Delete
+                End If
+            End If
+        Next i
+    End With
+End Sub
